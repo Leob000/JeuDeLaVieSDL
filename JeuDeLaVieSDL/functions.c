@@ -12,6 +12,18 @@ void showTab(char *tab){
     printf("--------------------------\n");
 }
 
+float ratio(char *tab){
+    int i, j, cpt = 0;
+    float res, size = LIGNES*COLONNES;
+    for(j=0;j<LIGNES;j++){
+        for(i=0;i<COLONNES;i++){
+            if(tab[j*COLONNES + i] == CELLALIVE) cpt++;
+        }
+    }
+    res = cpt/size;
+    return res;
+}
+
 void showGen(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
     int i, j;
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
@@ -22,6 +34,12 @@ void showGen(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
             if(tab[j * COLONNES + i] == CELLALIVE){
                 SDL_RenderDrawRect(renderer, &rect[j * COLONNES + i]);
                 SDL_RenderFillRect(renderer, &rect[j * COLONNES + i]);
+            }
+            else if(RECENTDEADYESNO == 1 && tab[j*COLONNES + i] == RECENTDEAD){
+                SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+                SDL_RenderDrawRect(renderer, &rect[j * COLONNES + i]);
+                SDL_RenderFillRect(renderer, &rect[j * COLONNES + i]);
+                SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             }
         }
     }
@@ -50,10 +68,10 @@ void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMo
             n = nombreVoisins(tab, i, j);
             if(n==3) tabtemp[j*COLONNES + i] = CELLALIVE;
             else if(n==2) tabtemp[j*COLONNES + i] = tab[j*COLONNES + i];
-            //else {
-                //if(RECENTDEADYESNO == 1 && tab[j*COLONNES + i] == CELLALIVE) tabtemp[j*COLONNES + i] = RECENTDEAD;
+            else {
+                if(RECENTDEADYESNO == 1 && tab[j*COLONNES + i] == CELLALIVE) tabtemp[j*COLONNES + i] = RECENTDEAD;
                 else tabtemp[j*COLONNES + i] = CELLDEAD;
-            //}
+            }
         }
     }
     for(j=0;j<LIGNES;j++){
@@ -128,7 +146,7 @@ void gameLoop(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMode){
                                 tabGenPlusOne(tab, rect, renderer, gameMode);
                             }
                             cpt++;
-                            printf("Gen = %d\n", cpt*GENMULT);
+                            printf("Gen = %d, Ratio = %f\n", cpt*GENMULT, ratio(tab));
                             continue;
                         default:
                             continue;
@@ -143,11 +161,13 @@ void gameLoop(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMode){
     }
 }
 
-void menu(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
+void menu(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, SDL_Texture *texture){
     SDL_bool programLaunched = SDL_TRUE;
     //Où mettre le sprite de menu
-    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
-    SDL_RenderClear(renderer);
+    //SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    //SDL_RenderClear(renderer);
+    //SDL_RenderPresent(renderer);
+    SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
     while(programLaunched){
         SDL_Event event;
@@ -163,6 +183,8 @@ void menu(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                             break;
                         case SDLK_z:
                             gameLoop(tab, rect, renderer, 2);
+                        case SDLK_e:
+                            gameLoop(tab, rect, renderer, 3);
                         default:
                             continue;
                     }
