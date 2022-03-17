@@ -26,7 +26,7 @@ int main(int argc, char * argv[]) {
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
     if(NULL == renderer) exitError("SDL_CreateRenderer");
 
-    SDL_Surface *surface = SDL_LoadBMP("/Users/leoburgund/Documents/Coding/Xcode/JeuDeLaVieSDL/JeuDeLaVieSDL/GOL.bmp");
+    SDL_Surface *surface = SDL_LoadBMP("GOL.bmp");
     if(surface == NULL) exitError("SDL_LoadBMP");
     
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
