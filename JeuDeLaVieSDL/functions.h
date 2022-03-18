@@ -11,7 +11,7 @@
 #define CELLALIVE '@'
 #define CELLDEAD ' '
 #define SQUARESIZE 4
-#define TAUXMUT 4
+#define TAUXMUT 5
 #define TAUXAPO 0
 #define GENMULT 1
 #define RATIOYESNO 1
@@ -20,8 +20,8 @@
 
 #define NBALGO 5
 #define POPTOT 5
-#define XGEN 30
-#define YGEN 1000
+#define XGEN 60
+#define YGEN 700
 
 
 void menu(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, SDL_Texture *texture);
@@ -34,6 +34,11 @@ void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMo
 int nombreVoisins(char *tab, int x, int y);
 void showTab(char *tab);
 void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer);
-int fitness1(char *tab);
+int fitness(char *tab, int nbalg);
+int relCellState(char *tab, int x, int y, int xx, int yy);
+int findSquare(char *tab, int x, int y);
+int find3LineVert(char *tab, int x, int y);
+int find3LineHori(char *tab, int x, int y);
+
 
 #endif

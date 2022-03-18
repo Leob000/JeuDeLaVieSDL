@@ -5,7 +5,7 @@ void showTab(char *tab){
     printf("--------------------------\n");
     for(j=0;j<LIGNES;++j){
         for(i=0;i<COLONNES;++i){
-            printf("%c", tab[j * COLONNES + i]);
+            printf("%c", tab[i + j * COLONNES]);
         }
         printf("\n");
     }
@@ -17,7 +17,7 @@ float ratio(char *tab){
     float res, size = LIGNES*COLONNES;
     for(j=0;j<LIGNES;++j){
         for(i=0;i<COLONNES;++i){
-            if(tab[j*COLONNES + i] == CELLALIVE) cpt++;
+            if(tab[i + j*COLONNES] == CELLALIVE) cpt++;
         }
     }
     res = cpt/size;
@@ -31,14 +31,14 @@ void showGen(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
     for(j=0;j<LIGNES;++j){
         for(i=0;i<COLONNES;++i){
-            if(tab[j * COLONNES + i] == CELLALIVE){
-                SDL_RenderDrawRect(renderer, &rect[j * COLONNES + i]);
-                SDL_RenderFillRect(renderer, &rect[j * COLONNES + i]);
+            if(tab[i + j * COLONNES] == CELLALIVE){
+                SDL_RenderDrawRect(renderer, &rect[i + j * COLONNES]);
+                SDL_RenderFillRect(renderer, &rect[i + j * COLONNES]);
             }
-            else if(RECENTDEADYESNO == 1 && tab[j*COLONNES + i] == RECENTDEAD){
+            else if(RECENTDEADYESNO == 1 && tab[i + j * COLONNES] == RECENTDEAD){
                 SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
-                SDL_RenderDrawRect(renderer, &rect[j * COLONNES + i]);
-                SDL_RenderFillRect(renderer, &rect[j * COLONNES + i]);
+                SDL_RenderDrawRect(renderer, &rect[i + j * COLONNES]);
+                SDL_RenderFillRect(renderer, &rect[i + j * COLONNES]);
                 SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
             }
         }
@@ -66,32 +66,50 @@ void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMo
     for(j=0;j<LIGNES;++j){
         for(i=0;i<COLONNES;++i){
             n = nombreVoisins(tab, i, j);
-            if(n==3) tabtemp[j*COLONNES + i] = CELLALIVE;
-            else if(n==2) tabtemp[j*COLONNES + i] = tab[j*COLONNES + i];
+            if(n==3) tabtemp[i + j * COLONNES] = CELLALIVE;
+            else if(n==2) tabtemp[i + j * COLONNES] = tab[i + j * COLONNES];
             else {
-                if(RECENTDEADYESNO == 1 && tab[j*COLONNES + i] == CELLALIVE) tabtemp[j*COLONNES + i] = RECENTDEAD;
-                else tabtemp[j*COLONNES + i] = CELLDEAD;
+                if(RECENTDEADYESNO == 1 && tab[i + j * COLONNES] == CELLALIVE) tabtemp[i + j * COLONNES] = RECENTDEAD;
+                else tabtemp[i + j * COLONNES] = CELLDEAD;
             }
         }
     }
     for(j=0;j<LIGNES;++j){
         for(i=0;i<COLONNES;++i){
-            tab[j*COLONNES + i] = tabtemp[j*COLONNES + i];
+            tab[i + j * COLONNES] = tabtemp[i + j * COLONNES];
         }
     }
     if(gameMode==2){
         for(j=0;j<LIGNES;++j){
             for(i=0;i<COLONNES;++i){
                 if(rand()%1000+1 <= TAUXMUT){
-                    tab[j * COLONNES + i] = CELLALIVE;
+                    tab[i + j * COLONNES] = CELLALIVE;
                     a = 1;
                 }
                 if(rand()%1000+1 <= TAUXAPO){
                     if(a == 1){
-                        if(rand()%2+1 == 1) tab[j * COLONNES + i] = CELLDEAD;
-                        else tab[j * COLONNES + i] = CELLALIVE;
+                        if(rand()%2+1 == 1) tab[i + j * COLONNES] = CELLDEAD;
+                        else tab[i + j * COLONNES] = CELLALIVE;
                     }
-                    else tab[j * COLONNES + i] = CELLDEAD;
+                    else tab[i + j * COLONNES] = CELLDEAD;
+                }
+                a = 0;
+            }
+        }
+    }
+    if(gameMode==3){
+        for(j=LIGNES/3;j<LIGNES*2/3;++j){
+            for(i=COLONNES/3;i<COLONNES*2/3;++i){
+                if(rand()%1000+1 <= TAUXMUT){
+                    tab[i + j * COLONNES] = CELLALIVE;
+                    a = 1;
+                }
+                if(rand()%1000+1 <= TAUXAPO){
+                    if(a == 1){
+                        if(rand()%2+1 == 1) tab[i + j * COLONNES] = CELLDEAD;
+                        else tab[i + j * COLONNES] = CELLALIVE;
+                    }
+                    else tab[i + j * COLONNES] = CELLDEAD;
                 }
                 a = 0;
             }
@@ -105,8 +123,8 @@ void randomInput(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
     int i, j;
     for(j=0;j<LIGNES;++j){
         for(i=0;i<COLONNES;++i){
-            if(rand()%2+1 == 1) tab[j * COLONNES + i] = CELLDEAD;
-            else tab[j * COLONNES + i] = CELLALIVE;
+            if(rand()%2+1 == 1) tab[i + j * COLONNES] = CELLDEAD;
+            else tab[i + j * COLONNES] = CELLALIVE;
         }
     }
     showGen(tab, rect, renderer);
@@ -116,20 +134,72 @@ void iniTab(char *tab, SDL_Rect *rect){
     int i, j;
     for(j=0;j<LIGNES;++j){
         for(i=0;i<COLONNES;++i){
-            tab[j * COLONNES + i] = CELLDEAD;
-            rect[j * COLONNES + i].x = i*(SQUARESIZE+1);
-            rect[j * COLONNES + i].y = j*(SQUARESIZE+1);
-            rect[j * COLONNES + i].w = SQUARESIZE;
-            rect[j * COLONNES + i].h = SQUARESIZE;
+            tab[i + j * COLONNES] = CELLDEAD;
+            rect[i + j * COLONNES].x = i*(SQUARESIZE+1);
+            rect[i + j * COLONNES].y = j*(SQUARESIZE+1);
+            rect[i + j * COLONNES].w = SQUARESIZE;
+            rect[i + j * COLONNES].h = SQUARESIZE;
         }
     }
 }
 
-int fitness1(char *tab){
+//Etat de la cellule à une position relative (xx, yy) d'une celule point de départ (x,y)
+int relCellState(char *tab, int x, int y, int xx, int yy){
+    if(tab[((y + yy + LIGNES)%LIGNES) * COLONNES + (x + xx + COLONNES)%COLONNES] == CELLALIVE) return 1;
+    return 0;
+}
+
+int findSquare(char *tab, int x, int y){
+    if(relCellState(tab, x, y, -1, -1) == 0 && relCellState(tab, x, y, 0, -1) == 0 && relCellState(tab, x, y, 1, -1) == 0 && relCellState(tab, x, y, 2, -1) == 0 && relCellState(tab, x, y, -1, 0) == 0 && tab[x + y * COLONNES] == CELLALIVE && relCellState(tab, x, y, 1, 0) == 1 && relCellState(tab, x, y, 2, 0) == 0 && relCellState(tab, x, y, -1, 1) == 0 && relCellState(tab, x, y, 0, 1) == 1 && relCellState(tab, x, y, 1, 1) == 1 && relCellState(tab, x, y, 2, 1) == 0 && relCellState(tab, x, y, -1, 2) == 0 && relCellState(tab, x, y, 0, 2) == 0 && relCellState(tab, x, y, 1, 2) == 0 && relCellState(tab, x, y, 2, 2) == 0) return 1;
+    return 0;
+}
+
+int find3LineVert(char *tab, int x, int y){
+    if(relCellState(tab, x, y, -1, -1) == 0 && relCellState(tab, x, y, 0, -1) == 0 && relCellState(tab, x, y, 1, -1) == 0 && relCellState(tab, x, y, 2, -1) == 0 && relCellState(tab, x, y, 3, -1) == 0 && relCellState(tab, x, y, -1, 0) == 0 && tab[x + y * COLONNES] == CELLALIVE && relCellState(tab, x, y, 1, 0) == 1 && relCellState(tab, x, y, 2, 0) == 1 && relCellState(tab, x, y, 3, 0) == 0 && relCellState(tab, x, y, -1, 1) == 0 && relCellState(tab, x, y, 0, 1) == 0 && relCellState(tab, x, y, 1, 1) == 0 && relCellState(tab, x, y, 2, 1) == 0 && relCellState(tab, x, y, 3, 1) == 0) return 1;
+    return 0;
+}
+
+int find3LineHori(char *tab, int x, int y){
+    if(relCellState(tab, x, y, -1, -1) == 0 && relCellState(tab, x, y, 0, -1) == 0 && relCellState(tab, x, y, 1, -1) == 0 && relCellState(tab, x, y, -1, 0) == 0 && tab[x + y * COLONNES] == CELLALIVE && relCellState(tab, x, y, 1, 0) == 0 && relCellState(tab, x, y, -1, 1) == 0 && relCellState(tab, x, y, 0, 1) == 1 && relCellState(tab, x, y, 1, 1) == 0 && relCellState(tab, x, y, -1, 2) == 0 && relCellState(tab, x, y, 0, 2) == 1 && relCellState(tab, x, y, 1, 2) == 0 && relCellState(tab, x, y, -1, 3) == 0 && relCellState(tab, x, y, 0, 3) == 0 && relCellState(tab, x, y, -1, 3) == 0) return 1;
+    return 0;
+}
+
+void cleanUp(char *tab){
+    int i, j;
+    for(j=0;j<LIGNES;++j){
+        for(i=0;i<COLONNES;++i){
+            if(rand()%4+1 <= 3){
+                if(findSquare(tab, i, j) == 1){
+                    tab[i + j * COLONNES] = CELLDEAD;
+                    tab[(i+1) + j * COLONNES] = CELLDEAD;
+                    tab[i + (j+1) * COLONNES] = CELLDEAD;
+                    tab[(i+1) + (j+1) * COLONNES] = CELLDEAD;
+                }
+                if(find3LineVert(tab, i, j) == 1){
+                    tab[i + j * COLONNES] = CELLDEAD;
+                    tab[(i+1) + j * COLONNES] = CELLDEAD;
+                    tab[(i+2) + j * COLONNES] = CELLDEAD;
+                }
+                if(find3LineHori(tab, i, j) == 1){
+                    tab[i + j * COLONNES] = CELLDEAD;
+                    tab[i + (j+1) * COLONNES] = CELLDEAD;
+                    tab[i + (j+2) * COLONNES] = CELLDEAD;
+                }
+            }
+        }
+    }
+}
+
+int fitness(char *tab, int nbalg){
     int i, j, cpt = 0;
     for(j=0;j<LIGNES;++j){
         for(i=0;i<COLONNES;++i){
-            if(tab[j * COLONNES + i] == CELLALIVE) cpt++;
+            if(tab[i + j * COLONNES] == CELLALIVE) cpt++;
+            if(nbalg > 0){
+                if(findSquare(tab, i, j) == 1) cpt -= 8;
+                if(find3LineVert(tab, i, j) == 1) cpt -= 4;
+                if(find3LineHori(tab, i, j) == 1) cpt -= 4;
+            }
         }
     }
     return cpt;
@@ -175,46 +245,46 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                                     //On prend dans tabStockStart le tab que l'on veut étudier
                                     for(j=0;j<LIGNES;++j){
                                         for(i=0;i<COLONNES;++i){
-                                            tab[j * COLONNES + i] = tabStockStart[(k * (LIGNES+COLONNES)) + (j * COLONNES) + i];
+                                            tab[i + j * COLONNES] = tabStockStart[i + COLONNES * (j + LIGNES * k)];
                                         }
                                     }
                                     
                                     //Delay pour afficher précédent starttab
+                                    /*
                                     if(l > 0 && k == 0){
                                         printf("Affichage tableau topfitness start\n");
                                         showGen(tab, rect, renderer);
-                                        SDL_Delay(1000);
+                                        SDL_Delay(2500);
                                     }
+                                     */
                                     
                                     printf("Algo numéro %d, Testing organisme %d\n", l+1, k+1);
                                     //Phase courte XGEN de mutation puis phase longue YGEN de survie/évolution sans mutation
-                                    for(i=0;i<XGEN;++i){
-                                        tabGenPlusOne(tab, rect, renderer, 2);
+                                    for(i=0;i<(XGEN/(l+1));++i){
+                                        tabGenPlusOne(tab, rect, renderer, 3);
                                     }
                                     //Plus tard accélérer le processus, stop si tab fulldead en ygen
                                     for(i=0;i<YGEN;++i){
                                         tabGenPlusOne(tab, rect, renderer, 1);
                                     }
                                     
+                                    //Cleanup des structures non intéressantes
+                                    //if(l > 0) cleanUp(tab);
+                                    
                                     //Stockage du score de fitness dans le tableau fitness
-                                    tabFitness[k] = fitness1(tab);
+                                    tabFitness[k] = fitness(tab, l);
                                     
-                                    //Stock le tableau 2D dans tabStock
-                                    for(i=0;i<COLONNES*LIGNES;++i){
-                                        tabStockFinish[k*(COLONNES*LIGNES) + i] = tab[i];
-                                    }
-                                    
-                                    //Réinitialise tab pour répéter l'étude, inutile vu que réaffecté à chaque début de boucle?
+                                    //Stock le tableau 2D dans tabStockFinish
                                     for(j=0;j<LIGNES;++j){
                                         for(i=0;i<COLONNES;++i){
-                                            tab[j * COLONNES + i] = CELLDEAD;
+                                            tabStockFinish[i + COLONNES * (j + LIGNES * k)] = tab[i+ j * COLONNES];
                                         }
                                     }
-                                    
                                 }
                                 
                                 //On repère l'indice du tableau avec le meilleur fitness
                                 //Version basique où on récupère juste le top1 meilleur fitness, et on rempli le tab start de top1
+                                //Plus tard faire version où l'on rempli un certain %aléatoire du start avec un autre certain top% des meilleurs fitness
                                 for(k=0;k<POPTOT;++k){
                                     if(tabFitness[k] > maxk){
                                         maxk = tabFitness[k];
@@ -225,7 +295,7 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                                 for(k=0;k<POPTOT;++k){
                                     for(j=0;j<LIGNES;++j){
                                         for(i=0;i<COLONNES;++i){
-                                            tabStockStart[(k * (LIGNES+COLONNES)) + (j * COLONNES) + i] = tabStockFinish[(indiceMaxk * (LIGNES+COLONNES)) + (j * COLONNES) + i];
+                                            tabStockStart[i + COLONNES * (j + LIGNES * k)] = tabStockFinish[i + COLONNES * (j + LIGNES * indiceMaxk)];
                                         }
                                     }
                                 }
@@ -233,19 +303,19 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                                 //Affichage du tableau topfitness pdt un peu de temps
                                 for(j=0;j<LIGNES;++j){
                                     for(i=0;i<COLONNES;++i){
-                                        tab[j*COLONNES + i] = tabStockFinish[(indiceMaxk * (LIGNES+COLONNES)) + (j * COLONNES) + i];
+                                        tab[i + j*COLONNES] = tabStockFinish[i + COLONNES * (j + LIGNES * indiceMaxk)];
                                     }
                                 }
                                 printf("Affichage du tableau topfitness de l'algo numéro %d\n", l+1);
                                 showGen(tab, rect, renderer);
-                                SDL_Delay(1000);
+                                SDL_Delay(2000);
                                 
                                 maxk = 0;
                                 indiceMaxk = 0;
                             }
                             for(j=0;j<LIGNES;++j){
                                 for(i=0;i<COLONNES;++i){
-                                    tab[j*COLONNES + i] = tabStockStart[(j * COLONNES) + i];
+                                    tab[i + j * COLONNES] = tabStockStart[i + j * COLONNES];
                                 }
                             }
                             printf("Done\n");
