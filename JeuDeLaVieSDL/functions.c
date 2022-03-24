@@ -149,18 +149,20 @@ int relCellState(char *tab, int x, int y, int xx, int yy){
     return 0;
 }
 
+
+//Mettre condidtion CELLALIVE en 1er pour la cellule étudiée
 int findSquare(char *tab, int x, int y){
-    if(relCellState(tab, x, y, -1, -1) == 0 && relCellState(tab, x, y, 0, -1) == 0 && relCellState(tab, x, y, 1, -1) == 0 && relCellState(tab, x, y, 2, -1) == 0 && relCellState(tab, x, y, -1, 0) == 0 && tab[x + y * COLONNES] == CELLALIVE && relCellState(tab, x, y, 1, 0) == 1 && relCellState(tab, x, y, 2, 0) == 0 && relCellState(tab, x, y, -1, 1) == 0 && relCellState(tab, x, y, 0, 1) == 1 && relCellState(tab, x, y, 1, 1) == 1 && relCellState(tab, x, y, 2, 1) == 0 && relCellState(tab, x, y, -1, 2) == 0 && relCellState(tab, x, y, 0, 2) == 0 && relCellState(tab, x, y, 1, 2) == 0 && relCellState(tab, x, y, 2, 2) == 0) return 1;
+    if(tab[x + y * COLONNES] == CELLALIVE && relCellState(tab, x, y, -1, -1) == 0 && relCellState(tab, x, y, 0, -1) == 0 && relCellState(tab, x, y, 1, -1) == 0 && relCellState(tab, x, y, 2, -1) == 0 && relCellState(tab, x, y, -1, 0) == 0 && relCellState(tab, x, y, 1, 0) == 1 && relCellState(tab, x, y, 2, 0) == 0 && relCellState(tab, x, y, -1, 1) == 0 && relCellState(tab, x, y, 0, 1) == 1 && relCellState(tab, x, y, 1, 1) == 1 && relCellState(tab, x, y, 2, 1) == 0 && relCellState(tab, x, y, -1, 2) == 0 && relCellState(tab, x, y, 0, 2) == 0 && relCellState(tab, x, y, 1, 2) == 0 && relCellState(tab, x, y, 2, 2) == 0) return 1;
     return 0;
 }
 
 int find3LineVert(char *tab, int x, int y){
-    if(relCellState(tab, x, y, -1, -1) == 0 && relCellState(tab, x, y, 0, -1) == 0 && relCellState(tab, x, y, 1, -1) == 0 && relCellState(tab, x, y, 2, -1) == 0 && relCellState(tab, x, y, 3, -1) == 0 && relCellState(tab, x, y, -1, 0) == 0 && tab[x + y * COLONNES] == CELLALIVE && relCellState(tab, x, y, 1, 0) == 1 && relCellState(tab, x, y, 2, 0) == 1 && relCellState(tab, x, y, 3, 0) == 0 && relCellState(tab, x, y, -1, 1) == 0 && relCellState(tab, x, y, 0, 1) == 0 && relCellState(tab, x, y, 1, 1) == 0 && relCellState(tab, x, y, 2, 1) == 0 && relCellState(tab, x, y, 3, 1) == 0) return 1;
+    if(tab[x + y * COLONNES] == CELLALIVE && relCellState(tab, x, y, -1, -1) == 0 && relCellState(tab, x, y, 0, -1) == 0 && relCellState(tab, x, y, 1, -1) == 0 && relCellState(tab, x, y, 2, -1) == 0 && relCellState(tab, x, y, 3, -1) == 0 && relCellState(tab, x, y, -1, 0) == 0 && relCellState(tab, x, y, 1, 0) == 1 && relCellState(tab, x, y, 2, 0) == 1 && relCellState(tab, x, y, 3, 0) == 0 && relCellState(tab, x, y, -1, 1) == 0 && relCellState(tab, x, y, 0, 1) == 0 && relCellState(tab, x, y, 1, 1) == 0 && relCellState(tab, x, y, 2, 1) == 0 && relCellState(tab, x, y, 3, 1) == 0) return 1;
     return 0;
 }
 
 int find3LineHori(char *tab, int x, int y){
-    if(relCellState(tab, x, y, -1, -1) == 0 && relCellState(tab, x, y, 0, -1) == 0 && relCellState(tab, x, y, 1, -1) == 0 && relCellState(tab, x, y, -1, 0) == 0 && tab[x + y * COLONNES] == CELLALIVE && relCellState(tab, x, y, 1, 0) == 0 && relCellState(tab, x, y, -1, 1) == 0 && relCellState(tab, x, y, 0, 1) == 1 && relCellState(tab, x, y, 1, 1) == 0 && relCellState(tab, x, y, -1, 2) == 0 && relCellState(tab, x, y, 0, 2) == 1 && relCellState(tab, x, y, 1, 2) == 0 && relCellState(tab, x, y, -1, 3) == 0 && relCellState(tab, x, y, 0, 3) == 0 && relCellState(tab, x, y, -1, 3) == 0) return 1;
+    if(tab[x + y * COLONNES] == CELLALIVE && relCellState(tab, x, y, -1, -1) == 0 && relCellState(tab, x, y, 0, -1) == 0 && relCellState(tab, x, y, 1, -1) == 0 && relCellState(tab, x, y, -1, 0) == 0 && relCellState(tab, x, y, 1, 0) == 0 && relCellState(tab, x, y, -1, 1) == 0 && relCellState(tab, x, y, 0, 1) == 1 && relCellState(tab, x, y, 1, 1) == 0 && relCellState(tab, x, y, -1, 2) == 0 && relCellState(tab, x, y, 0, 2) == 1 && relCellState(tab, x, y, 1, 2) == 0 && relCellState(tab, x, y, -1, 3) == 0 && relCellState(tab, x, y, 0, 3) == 0 && relCellState(tab, x, y, -1, 3) == 0) return 1;
     return 0;
 }
 
@@ -249,15 +251,6 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                                         }
                                     }
                                     
-                                    //Delay pour afficher précédent starttab
-                                    /*
-                                    if(l > 0 && k == 0){
-                                        printf("Affichage tableau topfitness start\n");
-                                        showGen(tab, rect, renderer);
-                                        SDL_Delay(2500);
-                                    }
-                                     */
-                                    
                                     printf("Algo numéro %d, Testing organisme %d\n", l+1, k+1);
                                     //Phase courte XGEN de mutation puis phase longue YGEN de survie/évolution sans mutation
                                     for(i=0;i<(XGEN/(l+1));++i){
@@ -306,7 +299,7 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                                         tab[i + j*COLONNES] = tabStockFinish[i + COLONNES * (j + LIGNES * indiceMaxk)];
                                     }
                                 }
-                                printf("Affichage du tableau topfitness de l'algo numéro %d\n", l+1);
+                                printf("Affichage du meilleur tableau de l'algo numéro %d, sélectionné pour être le point de départ du prochain algo\n", l+1);
                                 showGen(tab, rect, renderer);
                                 SDL_Delay(2000);
                                 
@@ -318,7 +311,7 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                                     tab[i + j * COLONNES] = tabStockStart[i + j * COLONNES];
                                 }
                             }
-                            printf("Done\n");
+                            printf("Algorithmes terminés, possibilité d'appyer sur la touche espace pour voir l'évolution du tableau en cours\n");
                             showGen(tab, rect, renderer);
                             continue;
                         case SDLK_SPACE:
@@ -359,7 +352,15 @@ void gameLoop(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMode){
                                 tabGenPlusOne(tab, rect, renderer, gameMode);
                             }
                             cpt++;
-                            printf("Gen = %d, Ratio = %f\n", cpt*GENMULT, ratio(tab));
+                            printf("Gen = %d, Ratio Vivant/Mort = %f\n", cpt*GENMULT, ratio(tab));
+                            continue;
+                        case SDLK_c:
+                            for(i=0;i<GENMULT;++i){
+                                cleanUp(tab);
+                                tabGenPlusOne(tab, rect, renderer, gameMode);
+                            }
+                            cpt++;
+                            printf("Gen = %d, Ratio Vivant/Mort = %f\n", cpt*GENMULT, ratio(tab));
                             continue;
                         default:
                             continue;
