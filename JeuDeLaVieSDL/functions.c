@@ -216,7 +216,7 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
     if(NULL == tabFitness) printf("Erreur allocation tabFitness\n");
     //NE PAS OUBLIER D AJOUTER LES FREETAB A LA FIN DE LA FONCTION OU QUAND BREAK
     
-    int i, j, k, l, maxk=0, indiceMaxk=0;
+    int i, j, k, l, maxk=0, indiceMaxk=0, checkVide = 1;
     SDL_bool programLaunched = SDL_TRUE;
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -238,8 +238,8 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                             programLaunched = SDL_FALSE;
                             break;
                         case SDLK_e:
-                            //On répète l'algo d'évolution un nombre NBALGO de fois
-                            for(l=0;l<NBALGO;++l){
+                            //On répète l'algo d'évolution un nombre NBITERATION de fois
+                            for(l=0;l<NBITERATION;++l){
                                 
                                 //Nombre total d'organismes étudiés à la fois = POPTOT
                                 for(k=0;k<POPTOT;++k){
@@ -251,7 +251,7 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                                         }
                                     }
                                     
-                                    printf("Algo numéro %d, Testing organisme %d\n", l+1, k+1);
+                                    printf("Itération numéro %d, Testing organisme %d\n", l+1, k+1);
                                     //Phase courte XGEN de mutation puis phase longue YGEN de survie/évolution sans mutation
                                     for(i=0;i<(XGEN/(l+1));++i){
                                         tabGenPlusOne(tab, rect, renderer, 3);
@@ -299,9 +299,20 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                                         tab[i + j*COLONNES] = tabStockFinish[i + COLONNES * (j + LIGNES * indiceMaxk)];
                                     }
                                 }
-                                printf("Affichage du meilleur tableau de l'algo numéro %d, sélectionné pour être le point de départ du prochain algo\n", l+1);
+                                printf("Affichage du meilleur tableau de l'itération numéro %d, sélectionné pour être le point de départ de la prochaine itération\n", l+1);
                                 showGen(tab, rect, renderer);
                                 SDL_Delay(2000);
+                                
+                                //Répète la première itéreation si elle n'a rien donné
+                                if(l == 0){
+                                    for(j=0;j<LIGNES;++j){
+                                        for(i=0;i<COLONNES;++i){
+                                            if(tab[i + j*COLONNES] == CELLALIVE) checkVide = 0;
+                                        }
+                                    }
+                                    if(checkVide == 1) l -= 1;
+                                    checkVide = 1;
+                                }
                                 
                                 maxk = 0;
                                 indiceMaxk = 0;
@@ -311,7 +322,7 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                                     tab[i + j * COLONNES] = tabStockStart[i + j * COLONNES];
                                 }
                             }
-                            printf("Algorithmes terminés, possibilité d'appyer sur la touche espace pour voir l'évolution du tableau en cours\n");
+                            printf("Itération terminées, possibilité d'appyer sur la touche espace pour voir l'évolution du tableau en cours\n");
                             showGen(tab, rect, renderer);
                             continue;
                         case SDLK_SPACE:

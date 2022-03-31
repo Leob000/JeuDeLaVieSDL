@@ -11,14 +11,14 @@
 #define CELLALIVE '@'
 #define CELLDEAD ' '
 #define SQUARESIZE 3
-#define TAUXMUT 6
+#define TAUXMUT 5
 #define TAUXAPO 0
 #define GENMULT 1
 #define RATIOYESNO 1
 #define RECENTDEAD '*'
 #define RECENTDEADYESNO 0
 
-#define NBALGO 10
+#define NBITERATION 10
 #define POPTOT 5
 #define XGEN 60
 #define YGEN 700
