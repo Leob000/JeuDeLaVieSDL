@@ -9,6 +9,7 @@
 #define COLONNES (WINDOW_WIDTH/(SQUARESIZE + 1)) //WINDOW_WIDTH doit être divisible par SQUARESIZE + 1
 #define LIGNES (WINDOW_HEIGHT/(SQUARESIZE + 1)) //Idem
 #define CELLALIVE '@'
+#define CELLALIVE2 'a'
 #define CELLDEAD ' '
 #define SQUARESIZE 3
 #define TAUXMUT 5
@@ -25,20 +26,6 @@
 
 
 void menu(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, SDL_Texture *texture);
-void gameLoop(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMode);
 void iniTab(char *tab, SDL_Rect *rect);
-void randomInput(char *tab, SDL_Rect *rect, SDL_Renderer *renderer);
-void showEvolution(char *tab, SDL_Rect *rect, SDL_Renderer *renderer);
-void showGen(char *tab, SDL_Rect *rect, SDL_Renderer *renderer);
-void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMode);
-int nombreVoisins(char *tab, int x, int y);
-void showTab(char *tab);
-void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer);
-int fitness(char *tab, int nbalg);
-int relCellState(char *tab, int x, int y, int xx, int yy);
-int findSquare(char *tab, int x, int y);
-int find3LineVert(char *tab, int x, int y);
-int find3LineHori(char *tab, int x, int y);
-
 
 #endif
