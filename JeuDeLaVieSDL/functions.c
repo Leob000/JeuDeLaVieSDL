@@ -266,13 +266,49 @@ int fitness(char *tab, int nbalg){
     return cpt;
 }
 
+void gameLoopFind(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
+    SDL_bool programLaunched = SDL_TRUE;
+    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+    SDL_RenderClear(renderer);
+    SDL_RenderPresent(renderer);
+    while(programLaunched){
+        SDL_Event event;
+        while(SDL_PollEvent(&event)){
+            switch(event.type){
+                case SDL_KEYDOWN:
+                    switch(event.key.keysym.sym){
+                        case SDLK_ESCAPE:
+                            programLaunched = SDL_FALSE;
+                            break;
+                        default:
+                            break;
+                    }
+                case SDL_QUIT:
+                    programLaunched = SDL_FALSE;
+                    break;
+                default:
+                    continue;
+            }
+        }
+    }
+}
+
 void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
     char *tabStockStart = (char*)malloc(sizeof(char)*COLONNES*LIGNES*POPTOT);
-    if(NULL == tabStockStart) printf("Erreur allocation tabStockStart\n");
+    if(NULL == tabStockStart){
+        printf("Erreur allocation tabStockStart\n");
+        exit(EXIT_FAILURE);
+    }
     char *tabStockFinish = (char*)malloc(sizeof(char)*COLONNES*LIGNES*POPTOT);
-    if(NULL == tabStockFinish) printf("Erreur allocation tabStockFinish\n");
+    if(NULL == tabStockFinish){
+        printf("Erreur allocation tabStockFinish\n");
+        exit(EXIT_FAILURE);
+    }
     int *tabFitness = (int*)malloc(sizeof(int)*POPTOT);
-    if(NULL == tabFitness) printf("Erreur allocation tabFitness\n");
+    if(NULL == tabFitness){
+        printf("Erreur allocation tabFitness\n");
+        exit(EXIT_FAILURE);
+    }
     //NE PAS OUBLIER D AJOUTER LES FREETAB A LA FIN DE LA FONCTION OU QUAND BREAK
     
     int i, j, k, l, maxk=0, indiceMaxk=0, checkVide = 1;
@@ -473,6 +509,9 @@ void menu(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, SDL_Texture *textur
                             break;
                         case SDLK_e:
                             gameLoopGenetic(tab, rect, renderer);
+                            break;
+                        case SDLK_r:
+                            gameLoopFind(tab, rect, renderer);
                             break;
                         case SDLK_q:
                             gameLoop(tab, rect, renderer, 4); //gameMode 4 est le mode couleur

@@ -13,10 +13,15 @@ void exitError(const char *message){
 int main(int argc, char * argv[]) {
     srand((int)time(NULL));
     char *tab = (char*)malloc(sizeof(char)*COLONNES*LIGNES);
-    if(NULL == tab) printf("Erreur allocation tab\n");
-    
+    if(NULL == tab){
+        printf("Erreur allocation tab\n");
+        exit(EXIT_FAILURE);
+    }
     SDL_Rect *rect = (SDL_Rect*)malloc(sizeof(SDL_Rect)*COLONNES*LIGNES);
-    if(NULL == rect) printf("Erreur allocation rect\n");
+    if(NULL == rect){
+        printf("Erreur allocation rect\n");
+        exit(EXIT_FAILURE);
+    }
     /*-------------------------------------------------------*/
     if(SDL_Init(SDL_INIT_VIDEO) != 0) exitError("Impossible d'initialiser SDL");
     
@@ -27,10 +32,10 @@ int main(int argc, char * argv[]) {
     if(NULL == renderer) exitError("SDL_CreateRenderer");
 
     SDL_Surface *surface = SDL_LoadBMP("GOL.bmp");
-    if(surface == NULL) exitError("SDL_LoadBMP");
+    if(NULL == surface) exitError("SDL_LoadBMP");
     
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-    if(texture == NULL) exitError("SDL_CreateTextureFromSurface");
+    if(NULL == texture) exitError("SDL_CreateTextureFromSurface");
     /*-------------------------------------------------------*/
 
     iniTab(tab, rect);
