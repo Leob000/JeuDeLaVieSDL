@@ -92,7 +92,7 @@ void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMo
     char *tabtemp;
     int i, j, n, a = 0, nRed, nBlue, nTot;
     tabtemp = (char*)malloc(sizeof(char)*COLONNES*LIGNES);
-    if(gameMode != 4){
+    if(gameMode != 4){ //Application des règles simples si tout sauf mode couleur
         for(j=0;j<LIGNES;++j){
             for(i=0;i<COLONNES;++i){
                 n = nombreVoisins(tab, i, j, CELLALIVE);
@@ -110,7 +110,7 @@ void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMo
             }
         }
     }
-    if(gameMode==2){
+    if(gameMode==2){ //Application règle Mutation/Apoptose si mode Mutation/Apoptose
         for(j=0;j<LIGNES;++j){
             for(i=0;i<COLONNES;++i){
                 if(rand()%1000+1 <= TAUXMUT){
@@ -128,14 +128,14 @@ void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMo
             }
         }
     }
-    if(gameMode==3){
+    if(gameMode==3){ //Application règle Mutation/Apoptose si mode Sélection naturelle
         for(j=LIGNES/3;j<LIGNES*2/3;++j){
             for(i=COLONNES/3;i<COLONNES*2/3;++i){
-                if(rand()%1000+1 <= TAUXMUT){
+                if(rand()%1000+1 <= TAUXMUTGEN){
                     tab[i + j * COLONNES] = CELLALIVE;
                     a = 1;
                 }
-                if(rand()%1000+1 <= TAUXAPO){
+                if(rand()%1000+1 <= TAUXAPOGEN){
                     if(a == 1){
                         if(rand()%2+1 == 1) tab[i + j * COLONNES] = CELLDEAD;
                         else tab[i + j * COLONNES] = CELLALIVE;
@@ -146,7 +146,7 @@ void tabGenPlusOne(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMo
             }
         }
     }
-    if(gameMode == 4){
+    if(gameMode == 4){ //Application des règles simples si mode couleur
         for(j=0;j<LIGNES;++j){
             for(i=0;i<COLONNES;++i){
                 nRed = nombreVoisins(tab, i, j, CELLALIVE);
@@ -209,7 +209,6 @@ int relCellState(char *tab, int x, int y, int xx, int yy){
 }
 
 
-//Mettre condidtion CELLALIVE en 1er pour la cellule étudiée
 int findSquare(char *tab, int x, int y){
     if(tab[x + y * COLONNES] == CELLALIVE && relCellState(tab, x, y, -1, -1) == 0 && relCellState(tab, x, y, 0, -1) == 0 && relCellState(tab, x, y, 1, -1) == 0 && relCellState(tab, x, y, 2, -1) == 0 && relCellState(tab, x, y, -1, 0) == 0 && relCellState(tab, x, y, 1, 0) == 1 && relCellState(tab, x, y, 2, 0) == 0 && relCellState(tab, x, y, -1, 1) == 0 && relCellState(tab, x, y, 0, 1) == 1 && relCellState(tab, x, y, 1, 1) == 1 && relCellState(tab, x, y, 2, 1) == 0 && relCellState(tab, x, y, -1, 2) == 0 && relCellState(tab, x, y, 0, 2) == 0 && relCellState(tab, x, y, 1, 2) == 0 && relCellState(tab, x, y, 2, 2) == 0) return 1;
     return 0;
@@ -256,7 +255,7 @@ int fitness(char *tab, int nbalg){
     for(j=0;j<LIGNES;++j){
         for(i=0;i<COLONNES;++i){
             if(tab[i + j * COLONNES] == CELLALIVE) cpt++;
-            if(nbalg > 0){
+            if(nbalg > 1){
                 if(findSquare(tab, i, j) == 1) cpt -= 8;
                 if(find3LineVert(tab, i, j) == 1) cpt -= 4;
                 if(find3LineHori(tab, i, j) == 1) cpt -= 4;
@@ -264,33 +263,6 @@ int fitness(char *tab, int nbalg){
         }
     }
     return cpt;
-}
-
-void gameLoopFind(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
-    SDL_bool programLaunched = SDL_TRUE;
-    SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-    SDL_RenderClear(renderer);
-    SDL_RenderPresent(renderer);
-    while(programLaunched){
-        SDL_Event event;
-        while(SDL_PollEvent(&event)){
-            switch(event.type){
-                case SDL_KEYDOWN:
-                    switch(event.key.keysym.sym){
-                        case SDLK_ESCAPE:
-                            programLaunched = SDL_FALSE;
-                            break;
-                        default:
-                            break;
-                    }
-                case SDL_QUIT:
-                    programLaunched = SDL_FALSE;
-                    break;
-                default:
-                    continue;
-            }
-        }
-    }
 }
 
 void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
@@ -309,7 +281,6 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
         printf("Erreur allocation tabFitness\n");
         exit(EXIT_FAILURE);
     }
-    //NE PAS OUBLIER D AJOUTER LES FREETAB A LA FIN DE LA FONCTION OU QUAND BREAK
     
     int i, j, k, l, maxk=0, indiceMaxk=0, checkVide = 1;
     SDL_bool programLaunched = SDL_TRUE;
@@ -346,9 +317,6 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                 tabGenPlusOne(tab, rect, renderer, 1);
             }
             
-            //Cleanup des structures non intéressantes
-            //if(l > 0) cleanUp(tab);
-            
             //Stockage du score de fitness dans le tableau fitness
             tabFitness[k] = fitness(tab, l);
             
@@ -362,7 +330,7 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
         
         //On repère l'indice du tableau avec le meilleur fitness
         //Version basique où on récupère juste le top1 meilleur fitness, et on rempli le tab start de top1
-        //Plus tard faire version où l'on rempli un certain %aléatoire du start avec un autre certain top% des meilleurs fitness
+        //Tester plus tard faire version où l'on rempli un certain %aléatoire du start avec un autre certain top% des meilleurs fitness??
         for(k=0;k<POPTOT;++k){
             if(tabFitness[k] > maxk){
                 maxk = tabFitness[k];
@@ -395,7 +363,10 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                     if(tab[i + j*COLONNES] == CELLALIVE) checkVide = 0;
                 }
             }
-            if(checkVide == 1) l -= 1;
+            if(checkVide == 1){
+                l -= 1;
+                printf("L'itération n'a rien donné, on recommence cette itération\n");
+            }
             checkVide = 1;
         }
         
@@ -410,7 +381,6 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
     printf("Itération terminées, possibilité d'appyer sur la touche espace pour voir l'évolution du tableau en cours\n");
     showGen(tab, rect, renderer, 0);
     
-    
     while(programLaunched){
         SDL_Event event;
         while(SDL_PollEvent(&event)){
@@ -419,6 +389,9 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                     switch(event.key.keysym.sym){
                         case SDLK_ESCAPE:
                             programLaunched = SDL_FALSE;
+                            free(tabStockStart);
+                            free(tabStockFinish);
+                            free(tabFitness);
                             break;
                         case SDLK_SPACE:
                             tabGenPlusOne(tab, rect, renderer, 1);
@@ -428,6 +401,9 @@ void gameLoopGenetic(char *tab, SDL_Rect *rect, SDL_Renderer *renderer){
                     }
                 case SDL_QUIT:
                     programLaunched = SDL_FALSE;
+                    free(tabStockStart);
+                    free(tabStockFinish);
+                    free(tabFitness);
                     break;
                 default:
                     break;
@@ -486,10 +462,6 @@ void gameLoop(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, int gameMode){
 
 void menu(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, SDL_Texture *texture){
     SDL_bool programLaunched = SDL_TRUE;
-    //Où mettre le sprite de menu
-    //SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
-    //SDL_RenderClear(renderer);
-    //SDL_RenderPresent(renderer);
     SDL_RenderCopy(renderer, texture, NULL, NULL);
     SDL_RenderPresent(renderer);
     while(programLaunched){
@@ -502,18 +474,15 @@ void menu(char *tab, SDL_Rect *rect, SDL_Renderer *renderer, SDL_Texture *textur
                             programLaunched = SDL_FALSE;
                             break;
                         case SDLK_a:
-                            gameLoop(tab, rect, renderer, 1);
+                            gameLoop(tab, rect, renderer, 1); //gameMode1 est le mode d'input de base random
                             break;
                         case SDLK_z:
-                            gameLoop(tab, rect, renderer, 2);
+                            gameLoop(tab, rect, renderer, 2); //gameMode2 est le mode Mutations/Apoptoses
                             break;
                         case SDLK_e:
                             gameLoopGenetic(tab, rect, renderer);
                             break;
                         case SDLK_r:
-                            gameLoopFind(tab, rect, renderer);
-                            break;
-                        case SDLK_q:
                             gameLoop(tab, rect, renderer, 4); //gameMode 4 est le mode couleur
                             break;
                         default:

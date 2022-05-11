@@ -30,6 +30,7 @@
 		1C7419D527DFE77600070D3D /* libSDL2-2.0.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = "libSDL2-2.0.0.dylib"; path = "../../../../../../usr/local/Cellar/sdl2/2.0.20/lib/libSDL2-2.0.0.dylib"; sourceTree = "<group>"; };
 		1C7419E327E0AE1200070D3D /* functions.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = functions.h; sourceTree = "<group>"; };
 		1C7419E427E0AE1200070D3D /* functions.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = functions.c; sourceTree = "<group>"; };
+		1C82E445282BA9790042DD6B /* JDV.bmp */ = {isa = PBXFileReference; lastKnownFileType = image.bmp; path = JDV.bmp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -64,6 +65,7 @@
 		1C5499E427DFDE4600133EA5 /* JeuDeLaVieSDL */ = {
 			isa = PBXGroup;
 			children = (
+				1C82E445282BA9790042DD6B /* JDV.bmp */,
 				1C5499E527DFDE4600133EA5 /* main.c */,
 				1C7419E327E0AE1200070D3D /* functions.h */,
 				1C7419E427E0AE1200070D3D /* functions.c */,
